@@ -75,7 +75,7 @@
                 android:id="@+id/setbackmusic"
                 android:layout_width="309dp"
                 android:layout_height="26dp"
-                android:max="10"
+                android:max="9"
                 android:progress="5"
                 android:progressTint="#66B3FF"
                 android:thumbTint="#66B3FF"
@@ -93,6 +93,7 @@
                 tools:layout_editor_absoluteX="0dp" />
 
             <Switch
+                android:id="@+id/switchback"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="160dp"
@@ -112,33 +113,35 @@
                 app:layout_constraintTop_toBottomOf="@+id/closebackmusic"
                 tools:layout_editor_absoluteX="4dp"
                 tools:ignore="MissingConstraints" />
+
             <SeekBar
-                android:id="@+id/setbmusic"
+                android:id="@+id/setmusic"
                 android:layout_width="309dp"
                 android:layout_height="26dp"
-                android:max="10"
+                android:max="9"
                 android:progress="8"
                 android:progressTint="#66B3FF"
                 android:thumbTint="#66B3FF"
                 app:layout_constraintTop_toBottomOf="@+id/tvmusicSettings"
                 tools:ignore="MissingConstraints"
-                tools:layout_editor_absoluteX="0dp" />
+                tools:layout_editor_absoluteX="5dp" />
 
             <TextView
                 android:id="@+id/closemusic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="靜音音效"
-                app:layout_constraintTop_toBottomOf="@+id/setbmusic"
+                app:layout_constraintTop_toBottomOf="@+id/setmusic"
                 tools:ignore="MissingConstraints"
                 tools:layout_editor_absoluteX="0dp" />
 
             <Switch
+                android:id="@+id/switchmusic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="188dp"
                 app:layout_constraintStart_toEndOf="@+id/closemusic"
-                app:layout_constraintTop_toBottomOf="@+id/setbmusic"
+                app:layout_constraintTop_toBottomOf="@+id/setmusic"
                 tools:ignore="MissingConstraints,UseSwitchCompatOrMaterialXml" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -146,12 +149,13 @@
     </androidx.cardview.widget.CardView>
 
     <Button
+        android:id="@+id/back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="返回主頁面"
-        tools:layout_editor_absoluteX="143dp"
-        tools:layout_editor_absoluteY="317dp"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintTop_toBottomOf="@+id/cardSpeed"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="146dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

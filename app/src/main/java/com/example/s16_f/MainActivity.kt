@@ -22,6 +22,7 @@ import android.view.animation.BounceInterpolator
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.Spinner
@@ -56,7 +57,7 @@ class MainActivity : AppCompatActivity() {
     private var best0f = 1
     private var rabbitwin = 0
     private var turtlewin = 0
-    private lateinit var setting:Button
+    private lateinit var setting:ImageButton
 
     private lateinit var adapter: RaceResultAdapter
     private val raceResults = mutableListOf<RaceResult>()
@@ -137,7 +138,7 @@ class MainActivity : AppCompatActivity() {
 
         //初始畫音樂
         setupMusic()
-        setting=findViewById(R.id.setting)
+        setting=findViewById(R.id.imageButton)
 
         // 將變數與XML元件綁定
         btnStart = findViewById(R.id.btnStart)
@@ -155,8 +156,25 @@ class MainActivity : AppCompatActivity() {
         btnCleanHistory.setOnClickListener {
             dbHelper.clearAllRecords()
         }
+        setting.setOnClickListener {
+            settingmusic()
+        }
+
+        musicVolume=intent.getFloatExtra("musicvolume",0.7f)
+        effectVolume=intent.getFloatExtra("effectVolume",0.7f)
+        setMusicVolume(musicVolume)
+        setEffectVolume(effectVolume)
     }
 
+
+
+    private fun settingmusic(){
+        val intent=Intent(this,MainActivity3::class.java).apply {
+            putExtra("musicvolume",musicVolume)
+            putExtra("effectVolume",effectVolume)
+        }
+        startActivity(intent)
+    }
 
     private fun loadHistoryFromDatabase() {
         try {
@@ -279,8 +297,6 @@ class MainActivity : AppCompatActivity() {
             e.printStackTrace()
         }
     }
-
-    //音樂聲量
     private fun setMusicVolume(volume: Float) {
         try {
             backgroundMusic?.setVolume(volume, volume)
@@ -297,17 +313,6 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-    }
-    fun toggleMusic() {
-        isMusicEnabled = !isMusicEnabled
-        if (!isMusicEnabled) {
-            stopBackgroundMusic()
-        } else if (!btnStart.isEnabled) {
-            playBackgroundMusic()
-        }
-    }
-    fun toggleEffects() {
-        isEffectEnabled = !isEffectEnabled
     }
 
 
@@ -698,8 +703,8 @@ class MainActivity : AppCompatActivity() {
                 putExtra("RABBIT_WINS", rabbitwin)
                 putExtra("TURTLE_WINS", turtlewin)
                 putExtra("BEST_OF", best0f)
-                putExtra("FINAL_WINNER", if (rabbitwin > turtlewin) "兔子" else "烏龜")
-            }
+                    putExtra("FINAL_WINNER", if (rabbitwin > turtlewin) "兔子" else "烏龜")
+                }
             startActivity(intent)
             resetWinCount()
             clearRaceHistory()

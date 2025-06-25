@@ -37,15 +37,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <Button
-                android:id="@+id/setting"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                app:layout_constraintStart_toEndOf="@+id/tvTitle"
-                tools:ignore="MissingConstraints"
-                android:text="設定"
-                />
 
             <TextView
                 android:id="@+id/tvMatchType"
@@ -68,6 +59,16 @@
                 app:layout_constraintBaseline_toBaselineOf="@+id/tvMatchType"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/tvMatchType" />
+
+            <ImageButton
+                android:id="@+id/imageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="64dp"
+                app:layout_constraintStart_toEndOf="@+id/tvTitle"
+                app:srcCompat="@drawable/gear"
+                tools:ignore="MissingConstraints"
+                tools:layout_editor_absoluteY="-6dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
