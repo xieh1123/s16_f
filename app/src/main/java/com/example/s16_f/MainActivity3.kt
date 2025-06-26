@@ -13,74 +13,83 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class MainActivity3 : AppCompatActivity() {
-    @SuppressLint("MissingInflatedId")
-
-    private var musicback=0.0f
-    private var music=0.0f
-    private var isMusicEnabled = true
-    private var isEffectEnabled = true
+    private var musicback = 0.7f
+    private var music = 0.7f
+    private var isMusicEnabled = false
+    private var isEffectEnabled = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
-
-
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_main3)
 
-        var musicVolume = intent.getFloatExtra("musicVolume", 0.0F)
-        var effectVolume = intent.getFloatExtra("effectVolume", 0.0F)
-        musicback=musicVolume
-        music=effectVolume
+
+
+
+        musicback = intent.getFloatExtra("musicvolume", 0.7f)
+        music = intent.getFloatExtra("effectvolume", 0.7f)
+        isMusicEnabled = intent.getBooleanExtra("isMusicEnabled", false)
+        isEffectEnabled = intent.getBooleanExtra("isEffectEnabled", false)
+
         val setbackmusic = findViewById<SeekBar>(R.id.setbackmusic)
         val setmusic = findViewById<SeekBar>(R.id.setmusic)
         val switchback = findViewById<Switch>(R.id.switchback)
         val switchmusic = findViewById<Switch>(R.id.switchmusic)
         val back = findViewById<Button>(R.id.back)
 
+
+        switchback.isChecked = isMusicEnabled
+        switchmusic.isChecked = isEffectEnabled
+        setbackmusic.progress = (musicback.coerceIn(0f, 1f) * 100).toInt()
+        setmusic.progress = (music.coerceIn(0f, 1f) * 100).toInt()
+
+
         setbackmusic.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                musicVolume= (musicVolume+ 0.1).toFloat()
+                musicback = progress / 100.0f
             }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-
-            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
+
         setmusic.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                effectVolume= (effectVolume+ 0.1).toFloat()
+                music = progress / 100.0f
             }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-
-            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
+
+
+        switchback.setOnCheckedChangeListener { _, isChecked ->
+            isMusicEnabled = isChecked
+        }
+
+        switchmusic.setOnCheckedChangeListener { _, isChecked ->
+            isEffectEnabled = isChecked
+        }
+
 
         back.setOnClickListener {
             settingmusic()
+            finish()
         }
-
-
-
-
-
-
     }
-    private fun settingmusic(){
-        val intent= Intent(this,MainActivity::class.java).apply {
-            putExtra("musicvolume",musicback)
-            putExtra("effectVolume",music)
-        }
-        startActivity(intent)
 
+
+    private fun settingmusic() {
+        val resultIntent = Intent().apply {
+            putExtra("musicvolume", musicback)
+            putExtra("effectvolume", music)
+            putExtra("isMusicEnabled", isMusicEnabled)  // 返回当前 Switch 状态
+            putExtra("isEffectEnabled", isEffectEnabled)  // 返回当前 Switch 状态
+        }
+        setResult(RESULT_OK, resultIntent)
+        finish()
+    }
+
+
+    override fun onBackPressed() {
+        settingmusic()
+        super.onBackPressed()
     }
 }

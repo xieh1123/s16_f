@@ -129,7 +129,7 @@ class MainActivity : AppCompatActivity() {
         ivTurtle = findViewById(R.id.ivTurtle)
 
 
-        //
+
         rvHistory = findViewById(R.id.rvHistory)
         rvHistory.layoutManager = LinearLayoutManager(this)
         adapter = RaceResultAdapter(raceResults)
@@ -144,10 +144,14 @@ class MainActivity : AppCompatActivity() {
         btnStart = findViewById(R.id.btnStart)
         sbRabbit = findViewById(R.id.sbRabbit)
         sbTurtle = findViewById(R.id.sbTurtle)
-        // 對開始按鈕設定監聽器
+
+
+
+
         btnStart.setOnClickListener {
             setupRaceSeekBar()
             startRace()
+
         }
 
         dbHelper = RaceDatabaseHelper(this)
@@ -159,38 +163,53 @@ class MainActivity : AppCompatActivity() {
         setting.setOnClickListener {
             settingmusic()
         }
+        setting.setOnClickListener {
+            settingmusic()
+        }
 
-        musicVolume=intent.getFloatExtra("musicvolume",0.7f)
-        effectVolume=intent.getFloatExtra("effectVolume",0.7f)
-        setMusicVolume(musicVolume)
-        setEffectVolume(effectVolume)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK && data != null) {
+            musicVolume = data.getFloatExtra("musicvolume", 0.7f)
+            effectVolume = data.getFloatExtra("effectvolume", 0.7f)
+            isMusicEnabled = data.getBooleanExtra("isMusicEnabled", false)
+            isEffectEnabled = data.getBooleanExtra("isEffectEnabled", false)
 
 
-    private fun settingmusic(){
-        val intent=Intent(this,MainActivity3::class.java).apply {
-            putExtra("musicvolume",musicVolume)
-            putExtra("effectVolume",effectVolume)
+            setMusicVolume(musicVolume)
+            setEffectVolume(effectVolume)
+            applyMusicToggle(isMusicEnabled)
+            applyEffectToggle(isEffectEnabled)
         }
-        startActivity(intent)
+    }
+
+    private fun settingmusic() {
+        val intent = Intent(this, MainActivity3::class.java).apply {
+            putExtra("musicvolume", musicVolume)
+            putExtra("effectvolume", effectVolume)
+            putExtra("isMusicEnabled", isMusicEnabled)
+            putExtra("isEffectEnabled", isEffectEnabled)
+        }
+        startActivityForResult(intent, 1)  // 使用 requestCode = 1
     }
 
     private fun loadHistoryFromDatabase() {
         try {
             Log.d("MainActivity", "正在從資料庫載入歷史記錄...")
 
-            // 清空本地列表
+
             raceResults.clear()
 
-            // 從資料庫取得所有記錄
+
             val dbRecords = dbHelper.getAllRaceRecords()
             raceResults.addAll(dbRecords)
 
-            // 通知轉接器資料已變更
+
             adapter.notifyDataSetChanged()
 
-            // 更新空狀態顯示
+
             updateEmptyState()
 
             Log.d("MainActivity", "歷史記錄載入完成，共載入 ${raceResults.size} 筆記錄")
@@ -260,17 +279,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun playBackgroundMusic() {
-        try {
-            backgroundMusic?.let {
-                if (!it.isPlaying) {
-                    it.start()
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
 
     private fun stopBackgroundMusic() {
         try {
@@ -284,19 +292,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun playSound(soundPlayer: MediaPlayer?) {
-        try {
-            soundPlayer?.let {
-                if (it.isPlaying) {
-                    it.seekTo(0)  // 如果正在播放，重新開始
-                } else {
-                    it.start()    // 開始播放
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
+
     private fun setMusicVolume(volume: Float) {
         try {
             backgroundMusic?.setVolume(volume, volume)
@@ -315,14 +311,51 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun applyMusicToggle(enable: Boolean) {
+        isMusicEnabled = enable
+        if (!enable) {
+            stopBackgroundMusic()
+        } else if (!btnStart.isEnabled) {
+            playBackgroundMusic()
+        }
+    }
 
-
+    fun applyEffectToggle(enable: Boolean) {
+        isEffectEnabled = enable
+    }
+    private fun playBackgroundMusic() {
+        if (!isMusicEnabled) return
+        try {
+            backgroundMusic?.let {
+                if (!it.isPlaying) {
+                    it.start()
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+    private fun playSound(soundPlayer: MediaPlayer?) {
+        if (!isEffectEnabled) return
+        try {
+            soundPlayer?.let {
+                if (it.isPlaying) {
+                    it.seekTo(0)
+                } else {
+                    it.start()
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 
 
 
     private fun startRace() {
         // 進行賽跑後按鈕不可被操作
         btnStart.isEnabled = false
+        setting.isEnabled=false
         // 初始化兔子的賽跑進度
         progressRabbit = 0
         // 初始化烏龜的賽跑進度
@@ -341,6 +374,7 @@ class MainActivity : AppCompatActivity() {
         //開始播放音樂
         playSound(startSound)
         playBackgroundMusic()
+
 
         Handler(Looper.getMainLooper()).postDelayed({
             //兔子起跑
@@ -546,8 +580,9 @@ class MainActivity : AppCompatActivity() {
                 val currentTime = dateFormat.format(Date())
                 recordResult("兔子", progressRabbit, progressTurtle, currentTime)
                 btnStart.isEnabled = true
+                setting.isEnabled=true
                 showToast("兔子獲勝")
-                animateWinner("兔子")
+
             }
 
         } else if (msg.what == 2) {
@@ -562,8 +597,9 @@ class MainActivity : AppCompatActivity() {
                 val currentTime = dateFormat.format(Date())
                 recordResult("烏龜", progressRabbit, progressTurtle, currentTime)
                 btnStart.isEnabled = true
+                setting.isEnabled=true
                 showToast("烏龜獲勝")
-                animateWinner("烏龜")
+
             }
         }
         true
@@ -610,29 +646,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun animateWinner(winner: String) {
-        val winnerView = if (winner == "兔子") ivRabbit else
-            ivTurtle
-        //停止背景音樂
-        stopBackgroundMusic()
-        playSound(winSound)
 
-        val scaleX = ObjectAnimator.ofFloat(winnerView, "scaleX", 1f, 1.5f, 1.2f)
-        val scaleY = ObjectAnimator.ofFloat(winnerView, "scaleY", 1f, 1.5f, 1.2f)
-        val rotation = ObjectAnimator.ofFloat(winnerView, "rotation", 0f, 360f)
-
-        val victorySet = AnimatorSet()
-        victorySet.playTogether(scaleX, scaleY, rotation)
-        victorySet.duration = 1000
-        victorySet.interpolator = BounceInterpolator()
-        victorySet.start()
-
-        val blinkAnimation = ObjectAnimator.ofFloat(winnerView, "alpha", 1f, 0.3f, 1f)
-        blinkAnimation.duration = 300
-        blinkAnimation.repeatCount = 5
-        blinkAnimation.startDelay = 1000  // 延遲1秒開始
-        blinkAnimation.start()
-    }
 
 
     private fun recordResult(
@@ -703,6 +717,7 @@ class MainActivity : AppCompatActivity() {
                 putExtra("RABBIT_WINS", rabbitwin)
                 putExtra("TURTLE_WINS", turtlewin)
                 putExtra("BEST_OF", best0f)
+                putExtra("IS_EFFECT_ENABLED", isEffectEnabled)
                     putExtra("FINAL_WINNER", if (rabbitwin > turtlewin) "兔子" else "烏龜")
                 }
             startActivity(intent)

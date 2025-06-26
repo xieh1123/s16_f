@@ -97,6 +97,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="160dp"
+                android:checked="false"
                 app:layout_constraintStart_toEndOf="@+id/closebackmusic"
                 app:layout_constraintTop_toBottomOf="@+id/setbackmusic"
                 tools:ignore="MissingConstraints,UseSwitchCompatOrMaterialXml" />
@@ -111,8 +112,8 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintTop_toBottomOf="@+id/closebackmusic"
-                tools:layout_editor_absoluteX="4dp"
-                tools:ignore="MissingConstraints" />
+                tools:ignore="MissingConstraints"
+                tools:layout_editor_absoluteX="4dp" />
 
             <SeekBar
                 android:id="@+id/setmusic"
@@ -140,6 +141,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="188dp"
+                android:checked="false"
                 app:layout_constraintStart_toEndOf="@+id/closemusic"
                 app:layout_constraintTop_toBottomOf="@+id/setmusic"
                 tools:ignore="MissingConstraints,UseSwitchCompatOrMaterialXml" />
